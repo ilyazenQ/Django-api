@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
@@ -9,7 +10,7 @@ class Article(models.Model):
     content = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True, blank=True)
     time_update = models.DateTimeField(auto_now=True, blank=True)
-
+    user = models.ForeignKey(User, related_name='posts', verbose_name='Пользователь', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         return reverse('post', kwargs={'slug': self.slug})
@@ -18,6 +19,4 @@ class Article(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['time_update']
-
-
+        ordering = ['-time_update']
