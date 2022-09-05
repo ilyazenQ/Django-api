@@ -20,3 +20,7 @@ class Article(models.Model):
 
     class Meta:
         ordering = ['-time_update']
+
+class UserSub(models.Model):
+    user_id = models.IntegerField()
+    sub_id = models.IntegerField()

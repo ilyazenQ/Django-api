@@ -22,3 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('pk', 'username', 'posts')
+
+class UserSubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSub
+        fields = '__all__'
