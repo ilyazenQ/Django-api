@@ -19,11 +19,18 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = User
         fields = ('pk', 'username', 'posts')
 
+
 class UserSubSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSub
-        fields = '__all__'
+        fields = ('user', 'sub')
+
+class UserReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRead
+        fields = ('user', 'article')

@@ -30,11 +30,12 @@ class ArticleAPIList(generics.ListAPIView):
             raise Http404()
         return articles
 
+
 class ArticleSubAPIPagination(PageNumberPagination):
     page_size = 10
 
 
-#(6)
+# (6)
 class ArticleSubAPIList(generics.ListAPIView):
     serializer_class = ArticleSerializer
     pagination_class = ArticleSubAPIPagination
@@ -48,6 +49,7 @@ class ArticleSubAPIList(generics.ListAPIView):
         if len(articles) == 0:
             raise Http404()
         return articles
+
 
 # (2. Авторизованным пользователям создавать посты. Пост имеет заголовок и текст
 # поста. )
@@ -73,37 +75,78 @@ class UserAPIList(generics.ListAPIView):
     ordering_fields = ('posts',)
     ordering = ('post_count',)
 
-#5. Авторизованным пользователям подписываться и отписываться на посты других
-#пользователей.
+
+# 5. Авторизованным пользователям подписываться и отписываться на посты других
+# пользователей.
 class UserSubAPI(APIView):
     permission_classes = (IsAuthenticated,)
+
     def post(self, request, *args, **kwargs):
-        if not request.data['user_id'] or not request.data['sub_id']:
+        if not request.data['sub']:
             return Response({"Expected more arguments"})
         try:
-            user = User.objects.get(pk=request.data['user_id'])
-            sub = User.objects.get(pk=request.data['sub_id'])
+            user = request.user
+            sub = User.objects.get(pk=request.data['sub'])
         except:
             return Response({"error": "Objects does not exists"})
         instance, created = UserSub.objects.get_or_create(
-            user_id=request.data['user_id'],
-            sub_id=request.data['sub_id'],
+            user=user,
+            sub=sub,
         )
         if created:
             return Response({"status": "created"})
         return Response({"status": "Object already existing"})
 
     def delete(self, request, *args, **kwargs):
-        if not request.data['user_id'] or not request.data['sub_id']:
+        if not request.data['sub']:
             return Response({"Expected more arguments"})
         try:
-            user = User.objects.get(pk=request.data['user_id'])
-            sub = User.objects.get(pk=request.data['sub_id'])
+            user = request.user
+            sub = User.objects.get(pk=request.data['sub'])
         except:
             return Response({"error": "Objects does not exists"})
         instance = UserSub.objects.get(
-            user_id=request.data['user_id'],
-            sub_id=request.data['sub_id'],
+            user=user,
+            sub=sub,
         ).delete()
 
         return Response({"status": "Object deleted"})
+
+
+class UserReadAPI(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        if not request.data['article']:
+            return Response({"Expected more arguments"})
+        try:
+            user = request.user
+            article = Article.objects.get(pk=request.data['article'])
+        except:
+            return Response({"error": "Objects does not exists"})
+        instance, created = UserRead.objects.get_or_create(
+            user=user,
+            article=article,
+        )
+        if created:
+            return Response({"status": "Created"})
+        return Response({"status": "Object already read"})
+
+class ArticleWithFiltersAPIList(generics.ListAPIView):
+    serializer_class = ArticleSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.data['read'] == "get":
+            user_read_articles = UserRead.objects.filter(user=self.request.user)
+            articles = []
+            for item in user_read_articles:
+                articles.append(item.article)
+        else:
+            articles = Article.objects.all()
+        if len(articles) == 0:
+            raise Http404()
+        return articles
+
+

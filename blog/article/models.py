@@ -2,9 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
-
-# Create your models here.
-
 class Article(models.Model):
     title = models.CharField(max_length=255, unique=True, db_index=True, verbose_name='Заголовок')
     content = models.TextField(blank=True)
@@ -22,5 +19,9 @@ class Article(models.Model):
         ordering = ['-time_update']
 
 class UserSub(models.Model):
-    user_id = models.IntegerField()
-    sub_id = models.IntegerField()
+    user = models.ForeignKey(User, related_name='user_sub', on_delete=models.CASCADE)
+    sub = models.ForeignKey(User, related_name='sub_sub', on_delete=models.CASCADE)
+
+class UserRead(models.Model):
+    user = models.ForeignKey(User, related_name='user_read', on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, related_name='article_read', on_delete=models.CASCADE)
