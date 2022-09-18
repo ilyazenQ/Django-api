@@ -158,5 +158,5 @@ VALUE: Token d4520dc030f58d1b2c02742b6234eb6653672a50<br>
 `[{"pk":3,"title":"sdffdsfds","content":"dfgfdgdgf","user":1,"time_create":"2022-09-03T08:32:53.995040Z","time_update":"2022-09-03T08:32:53.995051Z"}]`
 
 ### Тесты
-test/test_api.go. <br>
+test/test_api.py. <br>
 запуск тестов: python manage.py test<br>
