@@ -138,7 +138,7 @@ class ArticleWithFiltersAPIList(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        if self.request.data['read'] == "get":
+        if self.request.GET.get("read") == "get":
             user_read_articles = UserRead.objects.filter(user=self.request.user)
             articles = []
             for item in user_read_articles:
