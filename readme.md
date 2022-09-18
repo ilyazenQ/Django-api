@@ -159,4 +159,4 @@ VALUE: Token d4520dc030f58d1b2c02742b6234eb6653672a50<br>
 
 ### Тесты
 test/test_api.go. <br>
-запуск тестов: <br>
+запуск тестов: python manage.py test<br>
